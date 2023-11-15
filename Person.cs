@@ -1,4 +1,6 @@
-﻿namespace UkladaniDat;
+﻿using System.Runtime.CompilerServices;
+
+namespace UkladaniDat;
 
 public abstract class Person
 {
