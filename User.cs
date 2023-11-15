@@ -27,17 +27,17 @@ public class User : Person, IPerson, ISaveable
 		using FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
 		using StreamWriter sw = new StreamWriter(fs);
 		sw.WriteLine(
-			$"{Nickname}{delimeter}{Name}{delimeter}{Surname}{delimeter}{Email}{delimeter}{Password}{delimeter}{DateOfBirth}{delimeter}{GetHashCode()}"
+			$"{Nickname}{delimeter}{Name}{delimeter}{Surname}{delimeter}{Email}{delimeter}{Password}{delimeter}{DateOfBirth}{delimeter}{GetHash()}"
 			);
 	}
 
 	public static IEnumerable<User> LoadUsersFromTextFile(string filePath, char delimeter = '|')
 	{
-		string[] data = LoadRawUserData(filePath, delimeter);
+		string[] data = LoadRawUserData(filePath);
 		foreach (var user in data)
 		{
 			string[] userData = user.Split(delimeter);
-			if (WasDataModified(userData)) yield break;
+			if (WasDataModified(userData)) throw new FileLoadException("V souboru existují neočekávané změny.");
 
 			yield return new User
 			{
@@ -53,13 +53,13 @@ public class User : Person, IPerson, ISaveable
 
 	private static bool WasDataModified(string[] userData)
 	{
-		int textHash = int.Parse(userData[6]);
-		int hash = HashCode.Combine(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5]);
+		string textHash = userData[6];
+		string hash = Extensions.GetHashString(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5]);
 		return hash != textHash;
 
 	}
 
-	private static string[] LoadRawUserData(string filePath, char delimeter)
+	private static string[] LoadRawUserData(string filePath)
 	{
 		using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		using StreamReader sr = new StreamReader(fs);
@@ -67,10 +67,16 @@ public class User : Person, IPerson, ISaveable
 		return data;
 	}
 
-	public override int GetHashCode()
+	public string GetHash()
 	{
-		int hashCode = HashCode.Combine(Nickname, Name, Surname, Email, 
+		//12:07
+		string hash;
+#if UseHashCodeCombine
+			hash = HashCode.Combine(Nickname, Name, Surname, Email, 
 			Password, DateOfBirth);
-		return hashCode;
+#else
+		hash = Extensions.GetHashString(Nickname, Name, Surname, Email, Password, DateOfBirth.ToString());
+#endif
+		return hash;
 	}
 }
