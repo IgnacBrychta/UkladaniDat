@@ -11,8 +11,8 @@ internal static class Extensions
 {
 	private static byte[] GetHash(string inputString)
 	{
-		using (HashAlgorithm algorithm = MD5.Create())
-			return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+		using HashAlgorithm algorithm = MD5.Create();
+		return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
 	}
 
 	public static string GetHashString(this string inputString)
