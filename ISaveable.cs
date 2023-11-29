@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CsvHelper.Configuration;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,5 +11,15 @@ namespace UkladaniDat;
 
 public interface ISaveable
 {
+	private static CultureInfo CultureInfo = new CultureInfo("cs-cz");
+	public static CsvConfiguration CsvConfiguration = new CsvConfiguration(CultureInfo)
+	{
+		Delimiter = ",",
+		NewLine = Environment.NewLine
+	};
 	public void SaveToTextFile(string filePath, char delimeter = '|');
+
+	public static abstract void SaveAllToTable(string filePath, IEnumerable<User> users);
+
+	public static abstract List<User> LoadAllUsersFromTable(string filePath);
 }

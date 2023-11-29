@@ -5,17 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.CompilerServices;
+using CsvHelper;
+using System.Runtime.Serialization;
 
 namespace UkladaniDat;
 
+[DataContract]
 public class User : Person, IPerson, ISaveable
 {
+	[DataMember]
 	public string? Name { get; set; }
+	[DataMember]
 	public string? Surname { get; set; }
+
 	public int Age { get => (int)(DateTime.Now - DateOfBirth).TotalDays / Program.daysInYear; }
+	[DataMember]
 	public string? Email { get; set; }
+	[DataMember]
 	public string? Password { get; set; }
+	[DataMember]
 	public DateTime DateOfBirth { get; set; }
+
+	public User(string? Name, string? Surname, string? Email, string? Password, DateTime DateOfBirth)
+	{
+		this.Name = Name;
+		this.Surname = Surname;
+		this.Email = Email;
+		this.Password = Password;
+		this.DateOfBirth = DateOfBirth;
+	}
+
+	public User() { }
 
 	public override string ToString()
 	{
@@ -79,4 +99,37 @@ public class User : Person, IPerson, ISaveable
 #endif
 		return hash;
 	}
+
+	public static void SaveAllToTable(string filePath, IEnumerable<User> users)
+	{
+		using FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+		using StreamWriter sw = new StreamWriter(fs);
+		using CsvWriter csvWriter = new CsvWriter(sw, ISaveable.CsvConfiguration);
+
+		csvWriter.WriteHeader<User>();
+		csvWriter.NextRecord();
+		foreach (User user in users)
+		{
+			csvWriter.WriteRecord(user);
+			csvWriter.NextRecord();
+		}
+	}
+
+	public static List<User> LoadAllUsersFromTable(string filePath)
+	{
+		using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+		using StreamReader sr = new StreamReader(fs);
+		using CsvReader csvReader = new CsvReader(sr, ISaveable.CsvConfiguration);
+
+		csvReader.Read();
+		csvReader.ReadHeader();
+		IEnumerable<User> users = csvReader.GetRecords<User>();
+		foreach (var item in users)
+		{
+
+		}
+		return new List<User>(users);
+		
+	}
 }
+//ten live share je goofy(._.)
