@@ -26,13 +26,14 @@ public class User : Person, IPerson, ISaveable
 	[DataMember]
 	public DateTime DateOfBirth { get; set; }
 
-	public User(string? Name, string? Surname, string? Email, string? Password, DateTime DateOfBirth)
+	public User(string name, string surname, string email, string password, DateTime dateOfBirth)
 	{
-		this.Name = Name;
-		this.Surname = Surname;
-		this.Email = Email;
-		this.Password = Password;
-		this.DateOfBirth = DateOfBirth;
+		Name = name;
+		Surname = surname;
+		Email = email;
+		Password = password;
+		DateOfBirth = dateOfBirth;
+
 	}
 
 	public User() { }
@@ -121,6 +122,7 @@ public class User : Person, IPerson, ISaveable
 		using StreamReader sr = new StreamReader(fs);
 		using CsvReader csvReader = new CsvReader(sr, ISaveable.CsvConfiguration);
 
+		// csvReader.Configuration.MissingFieldFound = null;
 		csvReader.Read();
 		csvReader.ReadHeader();
 		IEnumerable<User> users = csvReader.GetRecords<User>();

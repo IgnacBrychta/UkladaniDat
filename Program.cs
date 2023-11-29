@@ -15,7 +15,7 @@ internal class Program
 		List<User> users = new List<User>() { userHonza, userMatej};
 		User.SaveAllToTable("obcane.csv", users);
 
-		List<User> loadedUsers = User.LoadAllUsersFromTable(filePath);
+		List<User> loadedUsers = User.LoadAllUsersFromTable("obcane.csv");
 
 		userHonza.SaveToTextFile(filePath);
 		userMatej.SaveToTextFile(filePath);

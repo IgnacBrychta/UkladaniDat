@@ -15,7 +15,8 @@ public interface ISaveable
 	public static CsvConfiguration CsvConfiguration = new CsvConfiguration(CultureInfo)
 	{
 		Delimiter = ",",
-		NewLine = Environment.NewLine
+		NewLine = Environment.NewLine,
+		PrepareHeaderForMatch = args => args.Header.CapitalizeFirstLetter(),
 	};
 	public void SaveToTextFile(string filePath, char delimeter = '|');
 

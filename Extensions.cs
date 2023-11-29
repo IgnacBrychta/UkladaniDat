@@ -33,4 +33,9 @@ internal static class Extensions
 		}
 		return string.Join("", sb).GetHashString();
 	}
+
+	public static string CapitalizeFirstLetter(this string str)
+	{
+		return char.ToUpper(str[0]) + str[1..];
+	}
 }
