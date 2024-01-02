@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Runtime.CompilerServices;
-using CsvHelper;
+﻿using CsvHelper;
 using System.Runtime.Serialization;
+using System.Xml;
 
 namespace UkladaniDat;
 
 [DataContract]
-public class User : Person, IPerson, ISaveable
+public class User : Person, IPerson, ISaveable, ISaveableXml
 {
 	[DataMember]
 	public string? Name { get; set; }
@@ -58,8 +52,8 @@ public class User : Person, IPerson, ISaveable
 		foreach (var user in data)
 		{
 			string[] userData = user.Split(delimeter);
+			if (string.IsNullOrEmpty(user)) yield break;
 			if (WasDataModified(userData)) throw new FileLoadException("V souboru existují neočekávané změny.");
-
 			yield return new User
 			{
 				Nickname = userData[0],
@@ -90,7 +84,6 @@ public class User : Person, IPerson, ISaveable
 
 	public string GetHash()
 	{
-		//12:07
 		string hash;
 #if UseHashCodeCombine
 			hash = HashCode.Combine(Nickname, Name, Surname, Email, 
@@ -122,16 +115,29 @@ public class User : Person, IPerson, ISaveable
 		using StreamReader sr = new StreamReader(fs);
 		using CsvReader csvReader = new CsvReader(sr, ISaveable.CsvConfiguration);
 
-		// csvReader.Configuration.MissingFieldFound = null;
 		csvReader.Read();
 		csvReader.ReadHeader();
 		IEnumerable<User> users = csvReader.GetRecords<User>();
-		foreach (var item in users)
-		{
+		return new List<User>(users);		
+	}
 
-		}
-		return new List<User>(users);
+	public static void SaveAllToXml(string filePath, List<User> users)
+	{
+		using FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
+		using XmlWriter writer = XmlWriter.Create(fs, ISaveableXml.settings);
 		
+		DataContractSerializer serializer = new DataContractSerializer(typeof(User));
+		writer.WriteStartDocument();
+		writer.WriteWhitespace(Environment.NewLine);
+		writer.WriteStartElement("users");
+		writer.WriteWhitespace(Environment.NewLine);
+		foreach (User user in users)
+		{
+			serializer.WriteObject(writer, user);
+			writer.WriteWhitespace(Environment.NewLine);
+		}
+		writer.WriteEndElement();
+		writer.WriteWhitespace(Environment.NewLine);
+		writer.WriteEndDocument();
 	}
 }
-//ten live share je goofy(._.)

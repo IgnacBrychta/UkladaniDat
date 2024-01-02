@@ -23,4 +23,5 @@ public interface ISaveable
 	public static abstract void SaveAllToTable(string filePath, IEnumerable<User> users);
 
 	public static abstract List<User> LoadAllUsersFromTable(string filePath);
+	public static abstract IEnumerable<User> LoadUsersFromTextFile(string filePath, char delimeter = '|');
 }
