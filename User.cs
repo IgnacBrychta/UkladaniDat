@@ -116,7 +116,7 @@ public class User : Person, IPerson, ISaveable
 		}
 	}
 
-	public static List<User> LoadAllUsersFromTable(string filePath)
+	public static IEnumerable<User> LoadAllUsersFromTable(string filePath)
 	{
 		using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		using StreamReader sr = new StreamReader(fs);
@@ -126,12 +126,9 @@ public class User : Person, IPerson, ISaveable
 		csvReader.Read();
 		csvReader.ReadHeader();
 		IEnumerable<User> users = csvReader.GetRecords<User>();
-		foreach (var item in users)
+		foreach (User user in users)
 		{
-
+			yield return user;
 		}
-		return new List<User>(users);
-		
 	}
 }
-//ten live share je goofy(._.)
