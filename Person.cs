@@ -5,6 +5,7 @@ namespace UkladaniDat;
 [Serializable]
 public abstract class Person
 {
+	internal int Id { get; set; }
 	internal string? Nickname { get; set; }
 }
 

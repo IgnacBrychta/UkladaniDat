@@ -14,4 +14,5 @@ internal interface ISaveableXml
 		ConformanceLevel = ConformanceLevel.Auto
 	};
 	public static abstract void SaveAllToXml(string filePath, List<User> users);
+	public static abstract List<User> LoadAllFromXml(string filePath);
 }

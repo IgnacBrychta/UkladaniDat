@@ -16,10 +16,11 @@ internal class Program
 		List<User> users = new List<User>() { userHonza, userMatej};
 		User.SaveAllToTable("obcane.csv", users);
 		User.SaveAllToXml("obcane.xml", users);
-		List<User> loadedUsers = User.LoadAllUsersFromTable("obcane.csv");
+		User.LoadAllFromXml("obcane.xml");
+		//List<User> loadedUsers = User.LoadAllUsersFromTable("obcane.csv");
 
-		userHonza.SaveToTextFile(textFilePath);
-		userMatej.SaveToTextFile(textFilePath);
+		//userHonza.SaveToTextFile(textFilePath);
+		//userMatej.SaveToTextFile(textFilePath);
 
 		foreach (var uzivatel in User.LoadUsersFromTextFile("obcane.txt"))
 		{

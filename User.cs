@@ -109,7 +109,7 @@ public class User : Person, IPerson, ISaveable, ISaveableXml
 		}
 	}
 
-	public static IEnumerable<User> LoadAllUsersFromTable(string filePath)
+	public static List<User> LoadAllUsersFromTable(string filePath)
 	{
 		using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		using StreamReader sr = new StreamReader(fs);
@@ -139,5 +139,28 @@ public class User : Person, IPerson, ISaveable, ISaveableXml
 		writer.WriteEndElement();
 		writer.WriteWhitespace(Environment.NewLine);
 		writer.WriteEndDocument();
+	}
+	public static List<User> LoadAllFromXml(string filePath)
+	{
+		using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+		using XmlReader reader = XmlReader.Create(fs);
+		List<User> users = new List<User>();
+			
+		DataContractSerializer serializer = new DataContractSerializer(typeof(User));
+
+		while (reader.Read())
+		{
+#warning ukázat nameof()
+			if (reader.NodeType == XmlNodeType.Element && reader.Name == nameof(User))
+			{
+				User? user = (User?)serializer.ReadObject(reader);
+				if (user is null) continue;
+				users.Add(user);
+			}
+		}
+			
+		
+
+		return users;
 	}
 }
